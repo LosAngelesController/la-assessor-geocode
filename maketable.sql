@@ -88,5 +88,5 @@ CENTER_X decimal,
 CENTER_Y decimal,
 LAT_LON varchar,
 ShapeSTArea decimal,
-ShapeSTLength decimal,
+ShapeSTLength decimal
 )
