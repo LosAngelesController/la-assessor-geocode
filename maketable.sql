@@ -1,4 +1,5 @@
 create table parcels (
+OBJECTID varchar,
 ain varchar,
 apn varchar,
 SitusHouseNo varchar,
