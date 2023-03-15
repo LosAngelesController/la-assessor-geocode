@@ -134,7 +134,7 @@ func main() {
 
 	defer conn.Close(context.Background())
 
-	router.HandleFunc("/", homeLink)
+	http.HandleFunc("/", homeLink)
 	http.HandleFunc("/getcoords", GetParcelCoords)
 	http.HandleFunc("/healthz", Healthz)
 	fmt.Println("Starting server on port 8080...")
