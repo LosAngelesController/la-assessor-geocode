@@ -108,6 +108,9 @@ func Healthz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func homeLink(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Welcome to the Assessor API! Made by Kyler Chin https://github.com/kylerchin")
+}
 
 func main() {
 
@@ -131,6 +134,7 @@ func main() {
 
 	defer conn.Close(context.Background())
 
+	router.HandleFunc("/", homeLink)
 	http.HandleFunc("/getcoords", GetParcelCoords)
 	http.HandleFunc("/healthz", Healthz)
 	fmt.Println("Starting server on port 8080...")
