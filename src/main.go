@@ -18,7 +18,7 @@ type Config struct {
 	PGUser     string `json:"pg_user"`
 	PGPassword string `json:"pg_password"`
 	PGDatabase string `json:"pg_database"`
-	PGPort     uint16 `json:"pg_port"`
+	PGPort     string `json:"pg_port"`
 }
 
 // Parcel represents a row in the parcels table
