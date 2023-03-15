@@ -47,7 +47,7 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
         query = "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr = $1"
     }
 
-	rows, err := conn.Query(context.Background(), , address)
+	rows, err := conn.Query(context.Background(), query, address)
 	if err != nil {
 		log.Fatal(err)
 	}
