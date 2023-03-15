@@ -42,9 +42,9 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 
 	var query string
     if r.URL.Query().Get("contains") == "true" {
-        query = "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr LIKE '%' || $1 || '%'"
+        query = "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr LIKE '%' || $1 || '%' LIMIT 200"
     } else {
-        query = "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr = $1"
+        query = "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr = $1 LIMIT 200"
     }
 
 	rows, err := conn.Query(context.Background(), query, address)
