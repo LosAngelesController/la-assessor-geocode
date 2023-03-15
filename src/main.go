@@ -12,6 +12,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+// Config represents the JSON configuration file structure
+type Config struct {
+	PGHost     string `json:"pg_host"`
+	PGUser     string `json:"pg_user"`
+	PGPassword string `json:"pg_password"`
+	PGDatabase string `json:"pg_database"`
+}
+
 // Parcel represents a row in the parcels table
 type Parcel struct {
 	Address string  `json:"address"`
@@ -52,12 +60,30 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 
 // GetPGConfig returns a pgx.ConnConfig object with PostgreSQL connection information
 func GetPGConfig() pgx.ConnConfig {
+	config := ReadConfig()
 	return pgx.ConnConfig{
-		Host:     os.Getenv("PGHOST"),
-		User:     os.Getenv("PGUSER"),
-		Password: os.Getenv("PGPASSWORD"),
-		Database: os.Getenv("PGDATABASE"),
+		Host:     config.PGHost,
+		User:     config.PGUser,
+		Password: config.PGPassword,
+		Database: config.PGDatabase,
 	}
+}
+
+// ReadConfig reads the configuration from a JSON file
+func ReadConfig() Config {
+	configFile, err := os.Open("config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer configFile.Close()
+
+	var config Config
+	err = json.NewDecoder(configFile).Decode(&config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return config
 }
 
 // Healthz returns a 200 OK status code to indicate that the service is healthy and ready to serve requests
