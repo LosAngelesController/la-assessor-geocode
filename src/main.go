@@ -23,7 +23,7 @@ type Parcel struct {
 func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 	address := r.URL.Query().Get("address")
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("ASSESSOR_DB_URL"))
+	conn, err := pgx.Connect(context.Background(), GetPGConfig())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,10 +50,19 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(parcels)
 }
 
+// GetPGConfig returns a pgx.ConnConfig object with PostgreSQL connection information
+func GetPGConfig() pgx.ConnConfig {
+	return pgx.ConnConfig{
+		Host:     os.Getenv("PGHOST"),
+		User:     os.Getenv("PGUSER"),
+		Password: os.Getenv("PGPASSWORD"),
+		Database: os.Getenv("PGDATABASE"),
+	}
+}
 
 // Healthz returns a 200 OK status code to indicate that the service is healthy and ready to serve requests
 func Healthz(w http.ResponseWriter, r *http.Request) {
-	conn, err := pgx.Connect(context.Background(),  os.Getenv("ASSESSOR_DB_URL"))
+	conn, err := pgx.Connect(context.Background(),  GetPGConfig())
 	if err != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
@@ -73,6 +82,27 @@ func Healthz(w http.ResponseWriter, r *http.Request) {
 
 
 func main() {
+
+	// Attempt to connect to the database with retry logic
+	var conn *pgx.Conn
+	var err error
+	maxAttempts := 5
+	attempt := 1
+	for {
+		conn, err = pgx.Connect(context.Background(), GetPGConfig())
+		if err == nil {
+			break
+		}
+		if attempt == maxAttempts {
+			log.Fatalf("Could not connect to database after %d attempts: %v", maxAttempts, err)
+		}
+		log.Printf("Failed to connect to database on attempt %d: %v. Retrying in 5 seconds...", attempt, err)
+		time.Sleep(5 * time.Second)
+		attempt++
+	}
+
+	defer conn.Close(context.Background())
+
 	http.HandleFunc("/getcoords", GetParcelCoords)
 	http.HandleFunc("/healthz", Healthz)
 	fmt.Println("Starting server on port 8080...")
