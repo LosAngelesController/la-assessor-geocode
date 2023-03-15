@@ -1,3 +1,3 @@
 while true; do
-go run main.go
+go run src/main.go
 done
