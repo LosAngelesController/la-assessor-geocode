@@ -24,6 +24,8 @@ type Config struct {
 // Parcel represents a row in the parcels table
 type Parcel struct {
 	Address string  `json:"address"`
+	City    string  `json:"city"`
+	Zip     string  `json:"zip"`
 	Lat     float64 `json:"lat"`
 	Long    float64 `json:"long"`
 }
@@ -38,7 +40,7 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close(context.Background())
 
-	rows, err := conn.Query(context.Background(), "SELECT saddr as address, center_lat as lat, center_lon as long FROM parcels WHERE saddr = $1", address)
+	rows, err := conn.Query(context.Background(), "SELECT saddr as address, taxratecity as city, zip, center_lat as lat, center_lon as long FROM parcels WHERE saddr = $1", address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,7 +49,7 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 	var parcels []Parcel
 	for rows.Next() {
 		var parcel Parcel
-		if err := rows.Scan(&parcel.Address, &parcel.Lat, &parcel.Long); err != nil {
+		if err := rows.Scan(&parcel.Address, &parcel.City, &parcel.Zip, &parcel.Lat, &parcel.Long); err != nil {
 			log.Fatal(err)
 		}
 		parcels = append(parcels, parcel)
