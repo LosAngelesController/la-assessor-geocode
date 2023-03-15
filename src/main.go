@@ -58,6 +58,10 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	if len(parcels) == 0 {
+        parcels = []Parcel{}
+    }
+
 	json.NewEncoder(w).Encode(parcels)
 }
 
