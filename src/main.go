@@ -18,6 +18,7 @@ type Config struct {
 	PGUser     string `json:"pg_user"`
 	PGPassword string `json:"pg_password"`
 	PGDatabase string `json:"pg_database"`
+	PGPort     uint16 `json:"pg_port"`
 }
 
 // Parcel represents a row in the parcels table
@@ -64,6 +65,7 @@ func GetPGConfig() pgx.ConnConfig {
 	return pgx.ConnConfig{
 		Host:     config.PGHost,
 		User:     config.PGUser,
+		Port:     config.PGPort,
 		Password: config.PGPassword,
 		Database: config.PGDatabase,
 	}
@@ -82,6 +84,8 @@ func ReadConfig() Config {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("Config", config)
 
 	return config
 }
