@@ -60,15 +60,13 @@ func GetParcelCoords(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetPGConfig returns a pgx.ConnConfig object with PostgreSQL connection information
-func GetPGConfig() pgx.ConnConfig {
+func GetPGConfig() string {
 	config := ReadConfig()
-	return pgx.ConnConfig{
-		Host:     config.PGHost,
-		User:     config.PGUser,
-		Port:     config.PGPort,
-		Password: config.PGPassword,
-		Database: config.PGDatabase,
-	}
+
+	fmt.Println("PGHost", config.PGHost)
+
+	return fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
+	config.PGHost, config.PGUser, config.PGPassword, config.PGPort, config.PGDatabase)
 }
 
 // ReadConfig reads the configuration from a JSON file
